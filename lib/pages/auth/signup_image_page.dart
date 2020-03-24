@@ -6,14 +6,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:progress_indicator_button/progress_button.dart';
-import 'package:provider/provider.dart';
 import 'package:rect_getter/rect_getter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_clinic/animation/fade_animation.dart';
 import 'package:smart_clinic/models/pointer.dart';
 import 'package:smart_clinic/pages/auth/login.dart';
 import 'package:smart_clinic/pages/home.dart';
-import 'package:smart_clinic/providers/theme_provider.dart';
 import 'package:smart_clinic/utils/app_utils.dart';
 import 'package:smart_clinic/utils/firebase_methods.dart';
 import 'package:smart_clinic/utils/image_processing.dart';
@@ -35,6 +33,7 @@ class _CreateAccountImagePageState extends State<CreateAccountImagePage>
 
   var globalKey = RectGetter.createGlobalKey();
   Rect rect;
+
   // The ripple animation time (1 second)
   Duration animationDuration = Duration(milliseconds: 500);
   Duration delayTime = Duration(milliseconds: 500);
@@ -65,190 +64,178 @@ class _CreateAccountImagePageState extends State<CreateAccountImagePage>
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AppThemeProvider>(
-      builder: (BuildContext context, AppThemeProvider appTheme, Widget child) {
-        return Stack(
-          children: <Widget>[
-            WillPopScope(
-              onWillPop: () async {
-                cancelCreatingAccountProcess();
-                return true;
-              },
-              child: Scaffold(
-                appBar: AppBar(
-                  elevation: 0,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: appTheme.isDark ? Colors.white : Colors.black,
-                    ),
-                    onPressed: () async {
-                      AppUtils.hidwKeyboared(context);
-                      cancelCreatingAccountProcess();
-                    },
-                  ),
+    return Stack(
+      children: <Widget>[
+        WillPopScope(
+          onWillPop: () async {
+            cancelCreatingAccountProcess();
+            return true;
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Colors.black,
                 ),
-                body: SingleChildScrollView(
-                  child: Container(
-                    width: ScreenUtil.screenWidth,
-                    height: ScreenUtil.screenHeight,
-                    child: Padding(
-                      padding: EdgeInsets.all(
-                        ScreenUtil().setHeight(20),
+                onPressed: () async {
+                  AppUtils.hidwKeyboared(context);
+                  cancelCreatingAccountProcess();
+                },
+              ),
+            ),
+            body: SingleChildScrollView(
+              child: Container(
+                width: ScreenUtil.screenWidth,
+                height: ScreenUtil.screenHeight,
+                child: Padding(
+                  padding: EdgeInsets.all(
+                    ScreenUtil().setHeight(20),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: <Widget>[
+                            Text(
+                              '4',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontFamily: 'Radiant',
+                              ),
+                            ),
+                            Text(
+                              '/4',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: <Widget>[
-                                Text(
-                                  '4',
-                                  style: TextStyle(
-                                    color: appTheme.isDark
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontSize: 20,
-                                    fontFamily: 'Radiant',
-                                  ),
-                                ),
-                                Text(
-                                  '/4',
-                                  style: TextStyle(
-                                    color: appTheme.isDark
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ],
+                      Text(
+                        'Would you like to upload an image for your profile ? (Optional)',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(
+                        height: ScreenUtil().setHeight(18),
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: GestureDetector(
+                          onTap: () async {
+                            bool granted = await AppUtils.askPhotosPermission();
+                            if (granted == true) {
+                              imageFile = await ImageProcessing.getImage(
+                                ImageSource.gallery,
+                              );
+                              setState(() {});
+                            } else {
+                              AppUtils.showToast(
+                                msg:
+                                    'Can not access your gallery without your permission',
+                                timeInSeconds: 2,
+                              );
+                            }
+                          },
+                          child: Container(
+                            width: animationController.value,
+                            height: animationController.value,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: imageFile == null
+                                    ? AssetImage(
+                                        Pointer.currentUser.gender == 'Male'
+                                            ? 'assets/images/male.png'
+                                            : 'assets/images/female.png',
+                                      )
+                                    : FileImage(imageFile, scale: .5),
+                              ),
                             ),
                           ),
-                          Text(
-                            'Would you like to upload an image for your profile ? (Optional)',
-                            style: TextStyle(
-                              color:
-                                  appTheme.isDark ? Colors.white : Colors.black,
-                            ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: ScreenUtil().setHeight(40),
+                      ),
+                      MyFadeAnimation(
+                        delayinseconds: 2.2,
+                        child: Padding(
+                          padding: EdgeInsets.all(
+                            ScreenUtil().setHeight(30),
                           ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(18),
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: GestureDetector(
-                              onTap: () async {
-                                bool granted =
-                                    await AppUtils.askPhotosPermission();
-                                if (granted == true) {
-                                  imageFile = await ImageProcessing.getImage(
-                                    ImageSource.gallery,
-                                  );
-                                  setState(() {});
+                          child: RectGetter(
+                            key: globalKey,
+                            child: ProgressButton(
+                              color: Colors.white,
+                              progressIndicatorColor: Colors.blue,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                              child: Text(
+                                "Finish",
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                ),
+                              ),
+                              onPressed:
+                                  (AnimationController controller) async {
+                                controller.forward();
+                                if (await AppUtils.getConnectionState()) {
+                                  saveUserData(controller);
                                 } else {
-                                  AppUtils.showToast(
-                                    msg:
-                                        'Can not access your gallery without your permission',
-                                    timeInSeconds: 2,
+                                  AppUtils.showDialog(
+                                    context: context,
+                                    title: 'ALERT!',
+                                    negativeText: 'OK',
+                                    positiveText: '',
+                                    onPositiveButtonPressed: null,
+                                    contentText: 'No internet connection',
                                   );
+                                  controller.reverse();
                                 }
                               },
-                              child: Container(
-                                width: animationController.value,
-                                height: animationController.value,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: imageFile == null
-                                        ? AssetImage(
-                                            Pointer.currentUser.gender == 'Male'
-                                                ? 'assets/images/male.png'
-                                                : 'assets/images/female.png',
-                                          )
-                                        : FileImage(imageFile, scale: .5),
-                                  ),
-                                ),
-                              ),
                             ),
                           ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(40),
-                          ),
-                          MyFadeAnimation(
-                            delayinseconds: 2.2,
-                            child: Padding(
-                              padding: EdgeInsets.all(
-                                ScreenUtil().setHeight(30),
-                              ),
-                              child: RectGetter(
-                                key: globalKey,
-                                child: ProgressButton(
-                                  color: Colors.white,
-                                  progressIndicatorColor: Colors.blue,
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8),
-                                  ),
-                                  child: Text(
-                                    "Finish",
-                                    style: TextStyle(
-                                      color: Colors.blue,
-                                    ),
-                                  ),
-                                  onPressed:
-                                      (AnimationController controller) async {
-                                    controller.forward();
-                                    if (await AppUtils.getConnectionState()) {
-                                      saveUserData(controller);
-                                    } else {
-                                      AppUtils.showDialog(
-                                        context: context,
-                                        title: 'ALERT!',
-                                        negativeText: 'OK',
-                                        positiveText: '',
-                                        onPositiveButtonPressed: null,
-                                        contentText: 'No internet connection',
-                                      );
-                                      controller.reverse();
-                                    }
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: isStarted
-                                ? TyperAnimatedTextKit(
-                                    isRepeatingAnimation: true,
-                                    displayFullTextOnTap: false,
-                                    text: [
-                                      'please wait while creating your account',
-                                    ],
-                                    textStyle: TextStyle(
-                                      fontSize: 16.0,
-                                      color: appTheme.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                  )
-                                : SizedBox.shrink(),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: isStarted
+                            ? TyperAnimatedTextKit(
+                                isRepeatingAnimation: true,
+                                displayFullTextOnTap: false,
+                                text: [
+                                  'please wait while creating your account',
+                                ],
+                                textStyle: TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.black,
+                                ),
+                              )
+                            : SizedBox.shrink(),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-            _ripple(),
-          ],
-        );
-      },
+          ),
+        ),
+        _ripple(),
+      ],
     );
   }
 

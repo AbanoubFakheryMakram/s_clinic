@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:smart_clinic/models/pointer.dart';
-import 'package:smart_clinic/providers/theme_provider.dart';
 
 class PostFunctionality {
   static List<Widget> getSymptoms(DocumentSnapshot currentPost) {
@@ -12,30 +10,22 @@ class PostFunctionality {
     List<Widget> widgets = [];
     for (int i = 0; i < symptoms.length; i++) {
       widgets.add(
-        Consumer<AppThemeProvider>(
-          builder: (
-            BuildContext context,
-            AppThemeProvider appTheme,
-            Widget child,
-          ) {
-            return Padding(
-              padding: EdgeInsets.only(
-                left: ScreenUtil().setWidth(8),
-                right: ScreenUtil().setWidth(8),
+        Padding(
+          padding: EdgeInsets.only(
+            left: ScreenUtil().setWidth(8),
+            right: ScreenUtil().setWidth(8),
+          ),
+          child: Wrap(
+            direction: Axis.horizontal,
+            children: <Widget>[
+              Text(
+                '.  ${symptoms[i]}',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
               ),
-              child: Wrap(
-                direction: Axis.horizontal,
-                children: <Widget>[
-                  Text(
-                    '.  ${symptoms[i]}',
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
+            ],
+          ),
         ),
       );
     }
@@ -48,27 +38,22 @@ class PostFunctionality {
     List<Widget> widgets = [];
     for (int i = 0; i < pharmaceutical.length; i++) {
       widgets.add(
-        Consumer<AppThemeProvider>(
-          builder:
-              (BuildContext context, AppThemeProvider appTheme, Widget child) {
-            return Padding(
-              padding: EdgeInsets.only(
-                left: ScreenUtil().setWidth(8),
-                right: ScreenUtil().setWidth(8),
+        Padding(
+          padding: EdgeInsets.only(
+            left: ScreenUtil().setWidth(8),
+            right: ScreenUtil().setWidth(8),
+          ),
+          child: Wrap(
+            direction: Axis.horizontal,
+            children: <Widget>[
+              Text(
+                '.  ${pharmaceutical[i]}',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
               ),
-              child: Wrap(
-                direction: Axis.horizontal,
-                children: <Widget>[
-                  Text(
-                    '.  ${pharmaceutical[i]}',
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
+            ],
+          ),
         ),
       );
     }

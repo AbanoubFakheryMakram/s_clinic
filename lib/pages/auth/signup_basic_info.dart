@@ -5,11 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:progress_indicator_button/progress_button.dart';
-import 'package:provider/provider.dart';
 import 'package:smart_clinic/animation/fade_animation.dart';
 import 'package:smart_clinic/models/pointer.dart';
 import 'package:smart_clinic/pages/auth/signup_education_info.dart';
-import 'package:smart_clinic/providers/theme_provider.dart';
 import 'package:smart_clinic/utils/app_utils.dart';
 import 'package:smart_clinic/utils/firebase_methods.dart';
 import 'package:smart_clinic/utils/patterns.dart';
@@ -67,382 +65,352 @@ class _CreateAccountBasicInfoState extends State<CreateAccountBasicInfo>
 
   @override
   Widget build(BuildContext context) {
-    isDark = Provider.of<AppThemeProvider>(context).isDark;
-    return Consumer<AppThemeProvider>(
-      builder: (BuildContext context, AppThemeProvider appTheme, Widget child) {
-        return Scaffold(
-          appBar: AppBar(
-            elevation: 0,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: appTheme.isDark ? Colors.white : Colors.black,
-              ),
-              onPressed: () {
-                AppUtils.hidwKeyboared(context);
-                Navigator.of(context).pop();
-              },
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.black,
           ),
-          body: Container(
-            width: ScreenUtil.screenWidth,
-            height: ScreenUtil.screenHeight,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ScreenUtil().setHeight(20),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          onPressed: () {
+            AppUtils.hidwKeyboared(context);
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: Container(
+        width: ScreenUtil.screenWidth,
+        height: ScreenUtil.screenHeight,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: ScreenUtil().setHeight(20),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  textBaseline: TextBaseline.alphabetic,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Row(
-                      textBaseline: TextBaseline.alphabetic,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          'Basic Information',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color:
-                                appTheme.isDark ? Colors.white : Colors.black,
-                            fontFamily: 'Baloo',
-                            fontSize: _controller.value,
-                          ),
-                        ),
-                        Container(
-                          child: Row(
-                            textBaseline: TextBaseline.alphabetic,
-                            children: <Widget>[
-                              Text(
-                                '1',
-                                style: TextStyle(
-                                  color: appTheme.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 20,
-                                  fontFamily: 'Radiant',
-                                ),
-                              ),
-                              Text(
-                                '/4',
-                                style: TextStyle(
-                                  color: appTheme.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
+                    Text(
+                      'Basic Information',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'Baloo',
+                        fontSize: _controller.value,
+                      ),
                     ),
-                    SizedBox(
-                      height: ScreenUtil().setHeight(10),
-                    ),
-                    Form(
-                      key: _formKey,
-                      child: Column(
+                    Container(
+                      child: Row(
+                        textBaseline: TextBaseline.alphabetic,
                         children: <Widget>[
-                          MyFadeAnimation(
-                            delayinseconds: 2,
-                            child: buildTextFormField(
-                              label: 'name',
-                              isPhone: false,
-                              isPassword: false,
-                              isSSN: false,
+                          Text(
+                            '1',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontFamily: 'Radiant',
                             ),
                           ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(15),
-                          ),
-                          MyFadeAnimation(
-                            delayinseconds: 2.5,
-                            child: buildTextFormField(
-                              label: 'SSN',
-                              isPhone: false,
-                              isSSN: true,
-                              isPassword: false,
-                            ),
-                          ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(15),
-                          ),
-                          MyFadeAnimation(
-                            delayinseconds: 3,
-                            child: buildTextFormField(
-                              label: 'password',
-                              isPhone: false,
-                              isSSN: false,
-                              isPassword: true,
-                            ),
-                          ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(15),
-                          ),
-                          MyFadeAnimation(
-                            delayinseconds: 3.5,
-                            child: Row(
-                              textBaseline: TextBaseline.alphabetic,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 2,
-                                  child: CountryCodePicker(
-                                    onChanged: (countrySelected) {
-                                      countryCode = countrySelected.dialCode;
-                                    },
-                                    initialSelection: 'EG',
-                                    favorite: ['+20', 'EG'],
-                                    showCountryOnly: false,
-                                    onInit: (countryCode) {
-                                      this.countryCode = countryCode.dialCode;
-                                    },
-                                    textStyle: TextStyle(
-                                      color: appTheme.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                    showOnlyCountryWhenClosed: false,
-                                    alignLeft: false,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 4,
-                                  child: buildTextFormField(
-                                    isPassword: false,
-                                    isSSN: false,
-                                    isPhone: true,
-                                    label: 'phone number',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(20),
-                          ),
-                          MyFadeAnimation(
-                            delayinseconds: 4,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(
-                                    'Select your birth date',
-                                    style: TextStyle(
-                                      color: appTheme.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  RaisedButton(
-                                    child: Text(
-                                      'Select',
-                                      style: TextStyle(
-                                        color: appTheme.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    ),
-                                    color: Colors.blue,
-                                    onPressed: () {
-                                      AppUtils.hidwKeyboared(context);
-                                      getUserBirthDate();
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '$userBirthDate',
-                              style: TextStyle(
-                                color: Colors.blue,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(20),
-                          ),
-                          Align(
-                              alignment: Alignment.centerLeft,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  MyFadeAnimation(
-                                    delayinseconds: 4.5,
-                                    child: Text(
-                                      'Select Your gender',
-                                      style: TextStyle(
-                                        color: appTheme.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
-                                  MyFadeAnimation(
-                                    delayinseconds: 5,
-                                    child: Text(
-                                      '$userGender',
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )),
-                          SizedBox(
-                            height: ScreenUtil().setHeight(10),
-                          ),
-                          MyFadeAnimation(
-                            delayinseconds: 5.5,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 1,
-                                  child: buildGenderCard(
-                                    isSelected: isMale,
-                                    onTap: () {
-                                      setState(
-                                        () {
-                                          isMale = true;
-                                          isFemail = false;
-                                          userGender = 'Male';
-                                        },
-                                      );
-                                    },
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        Icon(
-                                          FontAwesomeIcons.mars,
-                                        ),
-                                        Text(
-                                          'Male',
-                                          style: TextStyle(
-                                            color: appTheme.isDark
-                                                ? Colors.white
-                                                : Colors.black,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: buildGenderCard(
-                                    isSelected: isFemail,
-                                    onTap: () {
-                                      setState(
-                                        () {
-                                          isMale = false;
-                                          isFemail = true;
-                                          userGender = 'Female';
-                                        },
-                                      );
-                                    },
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        Icon(
-                                          FontAwesomeIcons.venus,
-                                        ),
-                                        Text(
-                                          'Female',
-                                          style: TextStyle(
-                                            color: appTheme.isDark
-                                                ? Colors.white
-                                                : Colors.black,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
+                          Text(
+                            '/4',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 10,
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ScreenUtil().setHeight(10),
-                        vertical: ScreenUtil().setHeight(30),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: ScreenUtil().setHeight(10),
+                ),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      MyFadeAnimation(
+                        delayinseconds: 2,
+                        child: buildTextFormField(
+                          label: 'name',
+                          isPhone: false,
+                          isPassword: false,
+                          isSSN: false,
+                        ),
                       ),
-                      child: MyFadeAnimation(
-                        delayinseconds: 6,
-                        child: Container(
-                          height: ScreenUtil().setHeight(48),
-                          child: ProgressButton(
-                            progressIndicatorColor: Colors.white,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8),
-                            ),
-                            child: Text(
-                              "Next",
-                              style: TextStyle(
-                                color: Colors.white,
+                      SizedBox(
+                        height: ScreenUtil().setHeight(15),
+                      ),
+                      MyFadeAnimation(
+                        delayinseconds: 2.5,
+                        child: buildTextFormField(
+                          label: 'SSN',
+                          isPhone: false,
+                          isSSN: true,
+                          isPassword: false,
+                        ),
+                      ),
+                      SizedBox(
+                        height: ScreenUtil().setHeight(15),
+                      ),
+                      MyFadeAnimation(
+                        delayinseconds: 3,
+                        child: buildTextFormField(
+                          label: 'password',
+                          isPhone: false,
+                          isSSN: false,
+                          isPassword: true,
+                        ),
+                      ),
+                      SizedBox(
+                        height: ScreenUtil().setHeight(15),
+                      ),
+                      MyFadeAnimation(
+                        delayinseconds: 3.5,
+                        child: Row(
+                          textBaseline: TextBaseline.alphabetic,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Expanded(
+                              flex: 2,
+                              child: CountryCodePicker(
+                                onChanged: (countrySelected) {
+                                  countryCode = countrySelected.dialCode;
+                                },
+                                initialSelection: 'EG',
+                                favorite: ['+20', 'EG'],
+                                showCountryOnly: false,
+                                onInit: (countryCode) {
+                                  this.countryCode = countryCode.dialCode;
+                                },
+                                textStyle: TextStyle(
+                                  color: Colors.black,
+                                ),
+                                showOnlyCountryWhenClosed: false,
+                                alignLeft: false,
                               ),
                             ),
-                            onPressed: (
-                              AnimationController controller,
-                            ) async {
-                              processData(controller);
-                            },
+                            Expanded(
+                              flex: 4,
+                              child: buildTextFormField(
+                                isPassword: false,
+                                isSSN: false,
+                                isPhone: true,
+                                label: 'phone number',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: ScreenUtil().setHeight(20),
+                      ),
+                      MyFadeAnimation(
+                        delayinseconds: 4,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                'Select your birth date',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              RaisedButton(
+                                child: Text(
+                                  'Select',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                color: Colors.blue,
+                                onPressed: () {
+                                  AppUtils.hidwKeyboared(context);
+                                  getUserBirthDate();
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: isStarted
-                          ? TyperAnimatedTextKit(
-                              isRepeatingAnimation: true,
-                              displayFullTextOnTap: false,
-                              text: [
-                                msg,
-                              ],
-                              textStyle: TextStyle(
-                                fontSize: 16.0,
-                                color: appTheme.isDark
-                                    ? Colors.white
-                                    : Colors.black,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '$userBirthDate',
+                          style: TextStyle(
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: ScreenUtil().setHeight(20),
+                      ),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              MyFadeAnimation(
+                                delayinseconds: 4.5,
+                                child: Text(
+                                  'Select Your gender',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                  ),
+                                ),
                               ),
-                            )
-                          : SizedBox.shrink(),
-                    ),
-                    SizedBox(
-                      height: ScreenUtil().setHeight(20),
-                    ),
-                  ],
+                              MyFadeAnimation(
+                                delayinseconds: 5,
+                                child: Text(
+                                  '$userGender',
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )),
+                      SizedBox(
+                        height: ScreenUtil().setHeight(10),
+                      ),
+                      MyFadeAnimation(
+                        delayinseconds: 5.5,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Expanded(
+                              flex: 1,
+                              child: buildGenderCard(
+                                isSelected: isMale,
+                                onTap: () {
+                                  setState(
+                                    () {
+                                      isMale = true;
+                                      isFemail = false;
+                                      userGender = 'Male';
+                                    },
+                                  );
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      FontAwesomeIcons.mars,
+                                    ),
+                                    Text(
+                                      'Male',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: buildGenderCard(
+                                isSelected: isFemail,
+                                onTap: () {
+                                  setState(
+                                    () {
+                                      isMale = false;
+                                      isFemail = true;
+                                      userGender = 'Female';
+                                    },
+                                  );
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      FontAwesomeIcons.venus,
+                                    ),
+                                    Text(
+                                      'Female',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ScreenUtil().setHeight(10),
+                    vertical: ScreenUtil().setHeight(30),
+                  ),
+                  child: MyFadeAnimation(
+                    delayinseconds: 6,
+                    child: Container(
+                      height: ScreenUtil().setHeight(48),
+                      child: ProgressButton(
+                        progressIndicatorColor: Colors.white,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(8),
+                        ),
+                        child: Text(
+                          "Next",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        onPressed: (
+                          AnimationController controller,
+                        ) async {
+                          processData(controller);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: isStarted
+                      ? TyperAnimatedTextKit(
+                          isRepeatingAnimation: true,
+                          displayFullTextOnTap: false,
+                          text: [
+                            msg,
+                          ],
+                          textStyle: TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.black,
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                ),
+                SizedBox(
+                  height: ScreenUtil().setHeight(20),
+                ),
+              ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -555,97 +523,93 @@ class _CreateAccountBasicInfoState extends State<CreateAccountBasicInfo>
     bool isPhone,
     bool isSSN,
   }) {
-    return Consumer<AppThemeProvider>(
-      builder: (BuildContext context, AppThemeProvider appTheme, Widget child) {
-        return TextFormField(
-          style: TextStyle(
+    return TextFormField(
+      style: TextStyle(
+        color: Colors.black,
+      ),
+      onChanged: (input) {
+        isPassword
+            ? userPassword = input
+            : isPhone
+                ? phoneNumber = input
+                : isSSN ? ssn = input : username = input;
+      },
+      onSaved: (input) {
+        isPassword
+            ? userPassword = input
+            : isPhone
+                ? phoneNumber = input
+                : isSSN ? ssn = input : username = input;
+      },
+      validator: (userInput) {
+        if (userInput.isEmpty) {
+          return 'fill this field';
+        } else if (isPassword) {
+          if (userInput.length < 8) {
+            return 'password must be more than 8 characters';
+          }
+        } else if (!isSSN && !isPassword) {
+          if (userInput.length < 2) {
+            return 'is not a valid name';
+          }
+        } else if (isPhone) {
+          bool hasMatch = MyPatterns.checkPhonePattern(userInput);
+          if (!hasMatch) {
+            return 'invalid phone number';
+          }
+        } else if (isSSN) {
+          bool hasMatch = MyPatterns.checkEgyptionIdPattern(userInput);
+          if (hasMatch) {
+            return '';
+          } else {
+            return 'Invalid SSN';
+          }
+        }
+        return null;
+      },
+      textInputAction: TextInputAction.go,
+      textAlign: !isPhone ? TextAlign.center : TextAlign.left,
+      obscureText: isPassword ? hidePassword : false,
+      keyboardType: isPhone
+          ? TextInputType.phone
+          : isSSN ? TextInputType.number : TextInputType.text,
+      decoration: InputDecoration(
+        suffixIcon: isPassword
+            ? IconButton(
+                color: isDark ? Colors.white : Colors.black,
+                icon: Icon(
+                  hidePassword ? Icons.visibility_off : Icons.visibility,
+                ),
+                onPressed: () {
+                  setState(
+                    () {
+                      hidePassword = !hidePassword;
+                    },
+                  );
+                },
+              )
+            : null,
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
             color: isDark ? Colors.white : Colors.black,
           ),
-          onChanged: (input) {
-            isPassword
-                ? userPassword = input
-                : isPhone
-                    ? phoneNumber = input
-                    : isSSN ? ssn = input : username = input;
-          },
-          onSaved: (input) {
-            isPassword
-                ? userPassword = input
-                : isPhone
-                    ? phoneNumber = input
-                    : isSSN ? ssn = input : username = input;
-          },
-          validator: (userInput) {
-            if (userInput.isEmpty) {
-              return 'fill this field';
-            } else if (isPassword) {
-              if (userInput.length < 8) {
-                return 'password must be more than 8 characters';
-              }
-            } else if (!isSSN && !isPassword) {
-              if (userInput.length < 2) {
-                return 'is not a valid name';
-              }
-            } else if (isPhone) {
-              bool hasMatch = MyPatterns.checkPhonePattern(userInput);
-              if (!hasMatch) {
-                return 'invalid phone number';
-              }
-            } else if (isSSN) {
-              bool hasMatch = MyPatterns.checkEgyptionIdPattern(userInput);
-              if (hasMatch) {
-                return '';
-              } else {
-                return 'Invalid SSN';
-              }
-            }
-            return null;
-          },
-          textInputAction: TextInputAction.go,
-          textAlign: !isPhone ? TextAlign.center : TextAlign.left,
-          obscureText: isPassword ? hidePassword : false,
-          keyboardType: isPhone
-              ? TextInputType.phone
-              : isSSN ? TextInputType.number : TextInputType.text,
-          decoration: InputDecoration(
-            suffixIcon: isPassword
-                ? IconButton(
-                    color: isDark ? Colors.white : Colors.black,
-                    icon: Icon(
-                      hidePassword ? Icons.visibility_off : Icons.visibility,
-                    ),
-                    onPressed: () {
-                      setState(
-                        () {
-                          hidePassword = !hidePassword;
-                        },
-                      );
-                    },
-                  )
-                : null,
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: isDark ? Colors.white : Colors.black,
-              ),
-            ),
-            alignLabelWithHint: true,
-            errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: isDark ? Colors.white : Colors.black,
-              ),
-            ),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: isDark ? Colors.white : Colors.black,
-              ),
-            ),
-            labelText: label,
-            labelStyle: TextStyle(
-              color: appTheme.isDark ? Colors.white : Colors.black,
-            ),
+        ),
+        alignLabelWithHint: true,
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: isDark ? Colors.white : Colors.black,
           ),
-        );
-      },
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
+        labelText: label,
+        labelStyle: TextStyle(
+          color: Colors.black,
+        ),
+      ),
     );
   }
 

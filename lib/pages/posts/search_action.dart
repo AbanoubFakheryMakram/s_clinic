@@ -3,8 +3,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
-import 'package:smart_clinic/providers/theme_provider.dart';
 
 class SearchAction extends SearchDelegate<String> {
   SearchAction()
@@ -28,18 +26,13 @@ class SearchAction extends SearchDelegate<String> {
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
-      Consumer<AppThemeProvider>(
-        builder:
-            (BuildContext context, AppThemeProvider appTheme, Widget child) {
-          return IconButton(
-            icon: Icon(
-              Icons.clear,
-              //color: appTheme.isDark ? Colors.white : Colors.black,
-            ),
-            onPressed: () {
-              query = "";
-            },
-          );
+      IconButton(
+        icon: Icon(
+          Icons.clear,
+          //color: appTheme.isDark ? Colors.white : Colors.black,
+        ),
+        onPressed: () {
+          query = "";
         },
       )
     ];
@@ -47,20 +40,16 @@ class SearchAction extends SearchDelegate<String> {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return Consumer<AppThemeProvider>(
-      builder: (BuildContext context, AppThemeProvider appTheme, Widget child) {
-        return IconButton(
-          icon: AnimatedIcon(
-            icon: AnimatedIcons.menu_arrow,
-            progress: transitionAnimation,
-            // color: appTheme.isDark ? Colors.white : Colors.black,
-          ),
-          onPressed: () {
-            close(
-              context,
-              null,
-            );
-          },
+    return IconButton(
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,
+        // color: appTheme.isDark ? Colors.white : Colors.black,
+      ),
+      onPressed: () {
+        close(
+          context,
+          null,
         );
       },
     );
@@ -108,46 +97,40 @@ class SearchAction extends SearchDelegate<String> {
                   snapshot.data.documents[index]['degree'].contains('$query')) {
                 DocumentSnapshot currentDoctor = snapshot.data.documents[index];
                 return index % 2 == 0
-                    ? Consumer<AppThemeProvider>(
-                        builder: (BuildContext context,
-                            AppThemeProvider appTheme, Widget child) {
-                          return SlideInLeft(
-                            child: Padding(
-                              padding: EdgeInsets.all(
-                                ScreenUtil().setHeight(8.0),
-                              ),
-                              child: ListTile(
-                                onTap: () {},
-                                title: Row(
-                                  children: <Widget>[
-                                    Text(
-                                      '${currentDoctor['name']}',
-                                      style: TextStyle(
-                                        color: appTheme.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
+                    ? SlideInLeft(
+                        child: Padding(
+                          padding: EdgeInsets.all(
+                            ScreenUtil().setHeight(8.0),
+                          ),
+                          child: ListTile(
+                            onTap: () {},
+                            title: Row(
+                              children: <Widget>[
+                                Text(
+                                  '${currentDoctor['name']}',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      '${currentDoctor['specialist']} doctor',
-                                      style: TextStyle(
-                                        color: Theme.of(context).accentColor,
-                                        fontWeight: FontWeight.w300,
-                                      ),
-                                    ),
-                                    Text('${currentDoctor['degree']}'),
-                                  ],
+                              ],
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  '${currentDoctor['specialist']} doctor',
+                                  style: TextStyle(
+                                    color: Theme.of(context).accentColor,
+                                    fontWeight: FontWeight.w300,
+                                  ),
                                 ),
-                                leading: CircleAvatar(
-                                  backgroundImage: currentDoctor
-                                                  .data['image'] !=
-                                              null &&
+                                Text('${currentDoctor['degree']}'),
+                              ],
+                            ),
+                            leading: CircleAvatar(
+                              backgroundImage:
+                                  currentDoctor.data['image'] != null &&
                                           currentDoctor.data['image'].isNotEmpty
                                       ? CachedNetworkImageProvider(
                                           currentDoctor.data['image'],
@@ -159,56 +142,48 @@ class SearchAction extends SearchDelegate<String> {
                                           : AssetImage(
                                               'assets/images/female.png',
                                             ),
-                                ),
-                                trailing: Icon(
-                                  Icons.album,
-                                  color: Theme.of(context).accentColor,
-                                ),
-                              ),
                             ),
-                          );
-                        },
+                            trailing: Icon(
+                              Icons.album,
+                              color: Theme.of(context).accentColor,
+                            ),
+                          ),
+                        ),
                       )
-                    : Consumer<AppThemeProvider>(
-                        builder: (BuildContext context,
-                            AppThemeProvider appTheme, Widget child) {
-                          return SlideInRight(
-                            child: Padding(
-                              padding: EdgeInsets.all(
-                                ScreenUtil().setHeight(8.0),
-                              ),
-                              child: ListTile(
-                                onTap: () {},
-                                title: Row(
-                                  children: <Widget>[
-                                    Text(
-                                      '${currentDoctor['name']}',
-                                      style: TextStyle(
-                                        color: appTheme.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
+                    : SlideInRight(
+                        child: Padding(
+                          padding: EdgeInsets.all(
+                            ScreenUtil().setHeight(8.0),
+                          ),
+                          child: ListTile(
+                            onTap: () {},
+                            title: Row(
+                              children: <Widget>[
+                                Text(
+                                  '${currentDoctor['name']}',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      '${currentDoctor['specialist']} doctor',
-                                      style: TextStyle(
-                                        color: Theme.of(context).accentColor,
-                                        fontWeight: FontWeight.w300,
-                                      ),
-                                    ),
-                                    Text('${currentDoctor['degree']}'),
-                                  ],
+                              ],
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  '${currentDoctor['specialist']} doctor',
+                                  style: TextStyle(
+                                    color: Theme.of(context).accentColor,
+                                    fontWeight: FontWeight.w300,
+                                  ),
                                 ),
-                                leading: CircleAvatar(
-                                  backgroundImage: currentDoctor
-                                                  .data['image'] !=
-                                              null &&
+                                Text('${currentDoctor['degree']}'),
+                              ],
+                            ),
+                            leading: CircleAvatar(
+                              backgroundImage:
+                                  currentDoctor.data['image'] != null &&
                                           currentDoctor.data['image'].isNotEmpty
                                       ? CachedNetworkImageProvider(
                                           currentDoctor.data['image'],
@@ -220,15 +195,13 @@ class SearchAction extends SearchDelegate<String> {
                                           : AssetImage(
                                               'assets/images/female.png',
                                             ),
-                                ),
-                                trailing: Icon(
-                                  Icons.album,
-                                  color: Theme.of(context).accentColor,
-                                ),
-                              ),
                             ),
-                          );
-                        },
+                            trailing: Icon(
+                              Icons.album,
+                              color: Theme.of(context).accentColor,
+                            ),
+                          ),
+                        ),
                       );
               } else {
                 return SizedBox.shrink();

@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:lottie/lottie.dart';
 import 'package:progress_indicator_button/progress_button.dart';
 import 'package:smart_clinic/utils/app_utils.dart';
+
+import '../../utils/app_utils.dart';
 
 class ActivateClinicPage extends StatefulWidget {
   @override
@@ -19,9 +20,8 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
   final _formKey = GlobalKey<FormState>();
   final cardKey = GlobalKey<FlipCardState>();
   bool useCurrentLocation = true;
-  bool clinicIsActivated = false;
 
-  bool satarday = false;
+  bool satarday = true;
   bool sunday = false;
   bool monday = false;
   bool tuesday = false;
@@ -43,6 +43,8 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
 
   LatLng locationLatlng;
   var location = new Location();
+
+  List<Map<String, String>> workDays = List();
 
   AnimationController transformAnimationController;
   Animation<double> transformAnimation;
@@ -160,6 +162,9 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                                 height: ScreenUtil().setHeight(15),
                               ),
                               buildTextFormField('Fee', TextInputType.number),
+                              SizedBox(
+                                height: ScreenUtil().setHeight(15),
+                              ),
                               buildTextFormField(
                                   'Phone (Optional)', TextInputType.number),
                               SizedBox(
@@ -197,7 +202,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                                                 'Getting device location...';
                                             setState(() {});
                                             bool isGranted = await AppUtils
-                                                .askDevicePermission();
+                                                .askDeviceLocationPermission();
                                             if (isGranted) {
                                               location.getLocation().then(
                                                 (location) {
@@ -337,13 +342,391 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                       SizedBox(
                         height: ScreenUtil().setHeight(15),
                       ),
-                      buildDay('Satarday', satarday, _satarday),
-                      buildDay('Sunday', sunday, _sunday),
-                      buildDay('Monday', monday, _monday),
-                      buildDay('Tuesday', tuesday, _tuesday),
-                      buildDay('Wednesday', wednesday, _wednesday),
-                      buildDay('Thursday', thursday, _thursday),
-                      buildDay('Friday', friday, _friday),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: CheckboxListTile(
+                              subtitle: Text(_satarday),
+                              activeColor: Colors.blue,
+                              title: Text(
+                                'Satarday',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              value: satarday,
+                              dense: true,
+                              checkColor: Colors.white,
+                              onChanged: (bool val) {
+                                satarday = val;
+                                if (satarday) {
+                                  workDays.add({'Satarday': _satarday});
+                                } else {
+                                  workDays.removeWhere(
+                                    (item) => item.keys.first == 'Satarday',
+                                  );
+                                }
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: ScreenUtil().setWidth(18),
+                          ),
+                          RaisedButton(
+                            onPressed: () {
+                              DateTimeRangePicker(
+                                startText: "From",
+                                endText: "To",
+                                doneText: "Yes",
+                                cancelText: "Cancel",
+                                interval: 1,
+                                initialStartTime: DateTime.now(),
+                                initialEndTime: DateTime.now().add(
+                                  Duration(days: 20),
+                                ),
+                                mode: DateTimeRangePickerMode.time,
+                                onConfirm: (start, end) {
+                                  _satarday =
+                                      'FROM: ${start.hour}:${start.minute}   TO: ${end.hour}:${end.minute}';
+                                  setState(() {});
+                                },
+                              ).showPicker(context);
+                            },
+                            child: Text('Time'),
+                            color: Colors.blue,
+                            textColor: Colors.white,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: CheckboxListTile(
+                              subtitle: Text(_sunday),
+                              activeColor: Colors.blue,
+                              title: Text(
+                                'Sunday',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              value: sunday,
+                              dense: true,
+                              checkColor: Colors.white,
+                              onChanged: (bool val) {
+                                sunday = val;
+                                if (sunday) {
+                                  workDays.add({'Sunday': _sunday});
+                                } else {
+                                  workDays.removeWhere(
+                                    (item) => item.keys.first == 'Sunday',
+                                  );
+                                }
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: ScreenUtil().setWidth(18),
+                          ),
+                          RaisedButton(
+                            onPressed: () {
+                              DateTimeRangePicker(
+                                startText: "From",
+                                endText: "To",
+                                doneText: "Yes",
+                                cancelText: "Cancel",
+                                interval: 1,
+                                initialStartTime: DateTime.now(),
+                                initialEndTime: DateTime.now().add(
+                                  Duration(days: 20),
+                                ),
+                                mode: DateTimeRangePickerMode.time,
+                                onConfirm: (start, end) {
+                                  _sunday =
+                                      'FROM: ${start.hour}:${start.minute}   TO: ${end.hour}:${end.minute}';
+                                  setState(() {});
+                                },
+                              ).showPicker(context);
+                            },
+                            child: Text('Time'),
+                            color: Colors.blue,
+                            textColor: Colors.white,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: CheckboxListTile(
+                              subtitle: Text(_monday),
+                              activeColor: Colors.blue,
+                              title: Text(
+                                'Monday',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              value: monday,
+                              dense: true,
+                              checkColor: Colors.white,
+                              onChanged: (bool val) {
+                                monday = val;
+                                if (monday) {
+                                  workDays.add({'Monday': _monday});
+                                } else {
+                                  workDays.removeWhere(
+                                    (item) => item.keys.first == 'Monday',
+                                  );
+                                }
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: ScreenUtil().setWidth(18),
+                          ),
+                          RaisedButton(
+                            onPressed: () {
+                              DateTimeRangePicker(
+                                startText: "From",
+                                endText: "To",
+                                doneText: "Yes",
+                                cancelText: "Cancel",
+                                interval: 1,
+                                initialStartTime: DateTime.now(),
+                                initialEndTime: DateTime.now().add(
+                                  Duration(days: 20),
+                                ),
+                                mode: DateTimeRangePickerMode.time,
+                                onConfirm: (start, end) {
+                                  _monday =
+                                      'FROM: ${start.hour}:${start.minute}   TO: ${end.hour}:${end.minute}';
+                                  setState(() {});
+                                },
+                              ).showPicker(context);
+                            },
+                            child: Text('Time'),
+                            color: Colors.blue,
+                            textColor: Colors.white,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: CheckboxListTile(
+                              subtitle: Text(_tuesday),
+                              activeColor: Colors.blue,
+                              title: Text(
+                                'Tuesday',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              value: tuesday,
+                              dense: true,
+                              checkColor: Colors.white,
+                              onChanged: (bool val) {
+                                tuesday = val;
+                                if (tuesday) {
+                                  workDays.add({'Tuesday': _tuesday});
+                                } else {
+                                  workDays.removeWhere(
+                                    (item) => item.keys.first == 'Tuesday',
+                                  );
+                                }
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: ScreenUtil().setWidth(18),
+                          ),
+                          RaisedButton(
+                            onPressed: () {
+                              DateTimeRangePicker(
+                                startText: "From",
+                                endText: "To",
+                                doneText: "Yes",
+                                cancelText: "Cancel",
+                                interval: 1,
+                                initialStartTime: DateTime.now(),
+                                initialEndTime: DateTime.now().add(
+                                  Duration(days: 20),
+                                ),
+                                mode: DateTimeRangePickerMode.time,
+                                onConfirm: (start, end) {
+                                  _tuesday =
+                                      'FROM: ${start.hour}:${start.minute}   TO: ${end.hour}:${end.minute}';
+                                  setState(() {});
+                                },
+                              ).showPicker(context);
+                            },
+                            child: Text('Time'),
+                            color: Colors.blue,
+                            textColor: Colors.white,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: CheckboxListTile(
+                              subtitle: Text(_wednesday),
+                              activeColor: Colors.blue,
+                              title: Text(
+                                'Wednesday',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              value: wednesday,
+                              dense: true,
+                              checkColor: Colors.white,
+                              onChanged: (bool val) {
+                                wednesday = val;
+                                if (wednesday) {
+                                  workDays.add({'Wednesday': _wednesday});
+                                } else {
+                                  workDays.removeWhere(
+                                    (item) => item.keys.first == 'Wednesday',
+                                  );
+                                }
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: ScreenUtil().setWidth(18),
+                          ),
+                          RaisedButton(
+                            onPressed: () {
+                              DateTimeRangePicker(
+                                startText: "From",
+                                endText: "To",
+                                doneText: "Yes",
+                                cancelText: "Cancel",
+                                interval: 1,
+                                initialStartTime: DateTime.now(),
+                                initialEndTime: DateTime.now().add(
+                                  Duration(days: 20),
+                                ),
+                                mode: DateTimeRangePickerMode.time,
+                                onConfirm: (start, end) {
+                                  _wednesday =
+                                      'FROM: ${start.hour}:${start.minute}   TO: ${end.hour}:${end.minute}';
+                                  setState(() {});
+                                },
+                              ).showPicker(context);
+                            },
+                            child: Text('Time'),
+                            color: Colors.blue,
+                            textColor: Colors.white,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: CheckboxListTile(
+                              subtitle: Text(_thursday),
+                              activeColor: Colors.blue,
+                              title: Text(
+                                'Thursday',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              value: thursday,
+                              dense: true,
+                              checkColor: Colors.white,
+                              onChanged: (bool val) {
+                                thursday = val;
+                                if (thursday) {
+                                  workDays.add({'Thursday': _thursday});
+                                } else {
+                                  workDays.removeWhere(
+                                    (item) => item.keys.first == 'Thursday',
+                                  );
+                                }
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: ScreenUtil().setWidth(18),
+                          ),
+                          RaisedButton(
+                            onPressed: () {
+                              DateTimeRangePicker(
+                                startText: "From",
+                                endText: "To",
+                                doneText: "Yes",
+                                cancelText: "Cancel",
+                                interval: 1,
+                                initialStartTime: DateTime.now(),
+                                initialEndTime: DateTime.now().add(
+                                  Duration(days: 20),
+                                ),
+                                mode: DateTimeRangePickerMode.time,
+                                onConfirm: (start, end) {
+                                  _thursday =
+                                      'FROM: ${start.hour}:${start.minute}   TO: ${end.hour}:${end.minute}';
+                                  setState(() {});
+                                },
+                              ).showPicker(context);
+                            },
+                            child: Text('Time'),
+                            color: Colors.blue,
+                            textColor: Colors.white,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: CheckboxListTile(
+                              subtitle: Text(_friday),
+                              activeColor: Colors.blue,
+                              title: Text(
+                                'Friday',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                              value: friday,
+                              dense: true,
+                              checkColor: Colors.white,
+                              onChanged: (bool val) {
+                                friday = val;
+                                if (friday) {
+                                  workDays.add({'Friday': _friday});
+                                } else {
+                                  workDays.removeWhere(
+                                    (item) => item.keys.first == 'Friday',
+                                  );
+                                }
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: ScreenUtil().setWidth(18),
+                          ),
+                          RaisedButton(
+                            onPressed: () {
+                              DateTimeRangePicker(
+                                startText: "From",
+                                endText: "To",
+                                doneText: "Yes",
+                                cancelText: "Cancel",
+                                interval: 1,
+                                initialStartTime: DateTime.now(),
+                                initialEndTime: DateTime.now().add(
+                                  Duration(days: 20),
+                                ),
+                                mode: DateTimeRangePickerMode.time,
+                                onConfirm: (start, end) {
+                                  _friday =
+                                      'FROM: ${start.hour}:${start.minute}  TO: ${end.hour}:${end.minute}';
+                                  setState(() {});
+                                },
+                              ).showPicker(context);
+                            },
+                            child: Text('Time'),
+                            color: Colors.blue,
+                            textColor: Colors.white,
+                          ),
+                        ],
+                      ),
                       SizedBox(
                         height: ScreenUtil().setHeight(28),
                       ),
@@ -362,12 +745,12 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                             ),
                           ),
                           onPressed: (AnimationController controller) async {
-                            //  processData(controller);
+                            processData(controller, context);
                           },
                         ),
                       ),
                       SizedBox(
-                        height: ScreenUtil().setHeight(100),
+                        height: ScreenUtil().setHeight(150),
                       ),
                     ],
                   ),
@@ -389,15 +772,6 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
       },
       onSaved: (input) {
         label == 'Fee' ? fee = input : address = input;
-      },
-      validator: (input) {
-        if (input.isEmpty) {
-          return 'Fill this field';
-        } else if (int.parse(fee) <= 0) {
-          return 'Fee can not be less than or equal to zero';
-        } else {
-          return null;
-        }
       },
       decoration: InputDecoration(
         focusedBorder: UnderlineInputBorder(
@@ -426,49 +800,45 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
     );
   }
 
-  Widget buildDay(String day, bool dayIsCheck, String result) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: CheckboxListTile(
-            subtitle: Text(result),
-            title: Text('$day'),
-            value: dayIsCheck,
-            onChanged: (val) {
-              setState(
-                () {
-                  dayIsCheck = val;
-                },
-              );
-            },
-          ),
-        ),
-        RaisedButton(
-          onPressed: () {
-            DateTimeRangePicker(
-              startText: "From",
-              endText: "To",
-              doneText: "Yes",
-              cancelText: "Cancel",
-              interval: 1,
-              initialStartTime: DateTime.now(),
-              initialEndTime: DateTime.now().add(
-                Duration(days: 20),
-              ),
-              mode: DateTimeRangePickerMode.time,
-              onConfirm: (start, end) {
-                result =
-                    'FROM: ${start.hour}:${start.minute}   TO: ${end.hour}:${end.minute}';
-                setState(() {});
-              },
-            ).showPicker(context);
-          },
-          child: Text('Time'),
-          color: Colors.blue,
-          textColor: Colors.white,
-        ),
-      ],
-    );
+  void processData(AnimationController controller, BuildContext context) async {
+    print(workDays);
+    if (address.isEmpty && locationLatlng == null) {
+      AppUtils.showToast(msg: 'Please determine the clinic location');
+    } else if (fee.isEmpty) {
+      AppUtils.showToast(msg: 'Type the dialy fee');
+    } else if (int.parse(fee) <= 0) {
+      AppUtils.showToast(msg: 'Fee can not be less then or equal to zero');
+    } else if (workDays.length == 0) {
+      AppUtils.showToast(msg: 'Specify Work days and times');
+    } else if (satarday && _satarday.isEmpty) {
+      AppUtils.showToast(msg: 'Satarday time ?');
+    } else if (sunday && _sunday.isEmpty) {
+      AppUtils.showToast(msg: 'Sunday time ?');
+    } else if (monday && _monday.isEmpty) {
+      AppUtils.showToast(msg: 'Monday time ?');
+    } else if (tuesday && _tuesday.isEmpty) {
+      AppUtils.showToast(msg: 'Tuesday time ?');
+    } else if (wednesday && _wednesday.isEmpty) {
+      AppUtils.showToast(msg: 'Wednesday time ?');
+    } else if (thursday && _thursday.isEmpty) {
+      AppUtils.showToast(msg: 'Thuresday time ?');
+    } else if (friday && _friday.isEmpty) {
+      AppUtils.showToast(msg: 'Friday time ?');
+    } else {
+      controller.forward();
+      if (!await AppUtils.getConnectionState()) {
+        AppUtils.showDialog(
+          context: context,
+          title: 'Alert',
+          negativeText: 'OK',
+          positiveText: null,
+          onPositiveButtonPressed: null,
+          contentText: 'No Internet Connection',
+        );
+
+        controller.reverse();
+        return;
+      }
+    }
   }
 }

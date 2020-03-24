@@ -57,13 +57,13 @@ class AppUtils {
     FocusScope.of(context).requestFocus(FocusNode());
   }
 
-  static showToast({@required msg, int timeInSeconds}) {
+  static showToast({@required msg, int timeInSeconds, Color backgroundColor}) {
     Fluttertoast.showToast(
       msg: msg,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIos: timeInSeconds ?? 1,
-      backgroundColor: Colors.red,
+      backgroundColor: backgroundColor ?? Color(0xff1E1E1E),
       textColor: Colors.white,
       fontSize: 16.0,
     );
@@ -96,6 +96,24 @@ class AppUtils {
     ]).then(
       (Map<PermissionGroup, PermissionStatus> map) {
         if (map[PermissionGroup.storage] == PermissionStatus.granted) {
+          permissionState = true;
+        } else {
+          permissionState = false;
+        }
+      },
+    );
+
+    print('state of permission >>>> $permissionState');
+    return permissionState;
+  }
+
+  static Future<bool> askDeviceLocationPermission() async {
+    bool permissionState = false;
+    await PermissionHandler().requestPermissions([
+      PermissionGroup.location,
+    ]).then(
+      (Map<PermissionGroup, PermissionStatus> map) {
+        if (map[PermissionGroup.location] == PermissionStatus.granted) {
           permissionState = true;
         } else {
           permissionState = false;

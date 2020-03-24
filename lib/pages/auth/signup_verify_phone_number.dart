@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:provider/provider.dart';
 import 'package:smart_clinic/models/pointer.dart';
-import 'package:smart_clinic/providers/theme_provider.dart';
 import 'package:smart_clinic/utils/app_utils.dart';
 import 'package:smart_clinic/widgets/my_code_pin.dart';
 
@@ -50,172 +48,162 @@ class _VerifyPhoneNumberPageState extends State<VerifyPhoneNumberPage> {
 
         return true;
       },
-      child: Consumer<AppThemeProvider>(
-        builder:
-            (BuildContext context, AppThemeProvider appTheme, Widget child) {
-          return Scaffold(
-            appBar: AppBar(
-              elevation: 0,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: appTheme.isDark ? Colors.white : Colors.black,
-                ),
-                onPressed: () {
-                  AppUtils.hidwKeyboared(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) {
-                        return widget.backPage;
-                      },
-                    ),
-                  );
-                },
-              ),
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.black,
             ),
-            body: SingleChildScrollView(
-              child: Container(
-                width: ScreenUtil.screenWidth,
-                height: ScreenUtil.screenHeight,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: ScreenUtil().setHeight(20),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          textBaseline: TextBaseline.alphabetic,
-                          children: <Widget>[
-                            Text(
-                              '3',
-                              style: TextStyle(
-                                color: appTheme.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 20,
-                                fontFamily: 'Radiant',
-                              ),
-                            ),
-                            Text(
-                              '/4',
-                              style: TextStyle(
-                                color: appTheme.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 10,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Image.asset(
-                          'assets/images/verify.png',
-                          fit: BoxFit.cover,
-                          width: ScreenUtil().setWidth(280),
-                          height: ScreenUtil().setHeight(240),
-                        ),
-                      ),
-                      Text(
-                        'Enter the code that sent to you to verify your phone number',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: appTheme.isDark ? Colors.white : Colors.black,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: ScreenUtil().setHeight(8),
-                            vertical: ScreenUtil().setHeight(8)),
-                        child: MyPinCodeTextField(
-                          length: 6,
-                          obsecureText: false,
-                          animationType: AnimationType.fade,
-                          shape: PinCodeFieldShape.box,
-                          animationDuration: Duration(milliseconds: 300),
-                          borderRadius: BorderRadius.circular(5),
-                          fieldHeight: 50,
-                          fieldWidth: 40,
-                          borderWidth: 1.0,
-                          affirmativeText: 'Past code',
-                          textStyle: TextStyle(
+            onPressed: () {
+              AppUtils.hidwKeyboared(context);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) {
+                    return widget.backPage;
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            width: ScreenUtil.screenWidth,
+            height: ScreenUtil.screenHeight,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: ScreenUtil().setHeight(20),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: <Widget>[
+                        Text(
+                          '3',
+                          style: TextStyle(
                             color: Colors.black,
+                            fontSize: 20,
+                            fontFamily: 'Radiant',
                           ),
-                          animationCurve: Curves.easeInOut,
-                          dialogTitle: 'Past Code',
-                          backgroundColor: Colors.transparent,
-                          selectedColor:
-                              appTheme.isDark ? Colors.white : Colors.black,
-                          inactiveColor: Colors.yellow,
-                          textInputType: TextInputType.phone,
-                          activeColor: Colors.blue,
-                          onCompleted: (input) async {
-                            if (input.isNotEmpty && input.length == 6) {
-                              setState(
-                                () {
-                                  isStart = true;
-                                },
-                              );
-                              String result = await signInWithPhoneNumber(
-                                userInput: input,
-                                verificationId: verficationId,
-                              );
-
-                              if (result == 'DONE') {
-                                setState(
-                                  () {
-                                    isStart = false;
-                                  },
-                                );
-                                Navigator.of(context).push(
-                                  PageTransition(
-                                    child: widget.nextPage,
-                                    type: PageTransitionType.scale,
-                                  ),
-                                );
-                              } else if (result ==
-                                  'ERROR_INVALID_VERIFICATION_CODE') {
-                                setState(
-                                  () {
-                                    isStart = false;
-                                  },
-                                );
-                                AppUtils.showToast(
-                                  msg: 'Code incorrect',
-                                  timeInSeconds: 2,
-                                );
-                              } else {
-                                AppUtils.showToast(
-                                  msg: 'Error',
-                                  timeInSeconds: 2,
-                                );
-                              }
-                            }
-                          },
-                          onChanged: (value) {},
                         ),
-                      ),
-                      isStart
-                          ? Align(
-                              alignment: Alignment.center,
-                              child: CircularProgressIndicator(
-                                backgroundColor: Colors.blue,
-                              ),
-                            )
-                          : SizedBox.shrink(),
-                    ],
+                        Text(
+                          '/4',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Image.asset(
+                      'assets/images/verify.png',
+                      fit: BoxFit.cover,
+                      width: ScreenUtil().setWidth(280),
+                      height: ScreenUtil().setHeight(240),
+                    ),
+                  ),
+                  Text(
+                    'Enter the code that sent to you to verify your phone number',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: ScreenUtil().setHeight(8),
+                        vertical: ScreenUtil().setHeight(8)),
+                    child: MyPinCodeTextField(
+                      length: 6,
+                      obsecureText: false,
+                      animationType: AnimationType.fade,
+                      shape: PinCodeFieldShape.box,
+                      animationDuration: Duration(milliseconds: 300),
+                      borderRadius: BorderRadius.circular(5),
+                      fieldHeight: 50,
+                      fieldWidth: 40,
+                      borderWidth: 1.0,
+                      affirmativeText: 'Past code',
+                      textStyle: TextStyle(
+                        color: Colors.black,
+                      ),
+                      animationCurve: Curves.easeInOut,
+                      dialogTitle: 'Past Code',
+                      backgroundColor: Colors.transparent,
+                      selectedColor: Colors.black,
+                      inactiveColor: Colors.yellow,
+                      textInputType: TextInputType.phone,
+                      activeColor: Colors.blue,
+                      onCompleted: (input) async {
+                        if (input.isNotEmpty && input.length == 6) {
+                          setState(
+                            () {
+                              isStart = true;
+                            },
+                          );
+                          String result = await signInWithPhoneNumber(
+                            userInput: input,
+                            verificationId: verficationId,
+                          );
+
+                          if (result == 'DONE') {
+                            setState(
+                              () {
+                                isStart = false;
+                              },
+                            );
+                            Navigator.of(context).push(
+                              PageTransition(
+                                child: widget.nextPage,
+                                type: PageTransitionType.scale,
+                              ),
+                            );
+                          } else if (result ==
+                              'ERROR_INVALID_VERIFICATION_CODE') {
+                            setState(
+                              () {
+                                isStart = false;
+                              },
+                            );
+                            AppUtils.showToast(
+                              msg: 'Code incorrect',
+                              timeInSeconds: 2,
+                            );
+                          } else {
+                            AppUtils.showToast(
+                              msg: 'Error',
+                              timeInSeconds: 2,
+                            );
+                          }
+                        }
+                      },
+                      onChanged: (value) {},
+                    ),
+                  ),
+                  isStart
+                      ? Align(
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.blue,
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                ],
               ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:progress_indicator_button/progress_button.dart';
-import 'package:provider/provider.dart';
 import 'package:rect_getter/rect_getter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_clinic/animation/fade_animation.dart';
@@ -12,9 +11,7 @@ import 'package:smart_clinic/models/user.dart';
 import 'package:smart_clinic/pages/auth/forgot_password.dart';
 import 'package:smart_clinic/pages/auth/signup_basic_info.dart';
 import 'package:smart_clinic/pages/home.dart';
-import 'package:smart_clinic/providers/theme_provider.dart';
 import 'package:smart_clinic/utils/app_utils.dart';
-import 'package:smart_clinic/utils/const.dart';
 import 'package:smart_clinic/utils/firebase_methods.dart';
 import 'package:smart_clinic/utils/patterns.dart';
 
@@ -61,181 +58,170 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Consumer(
-          builder:
-              (BuildContext context, AppThemeProvider appTheme, Widget child) {
-            return Scaffold(
-              body: ListView(
+        Scaffold(
+          body: ListView(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        height: ScreenUtil().setHeight(20),
+                  SizedBox(
+                    height: ScreenUtil().setHeight(20),
+                  ),
+                  MyFadeAnimation(
+                    child: Image.asset(
+                      'assets/images/app_icon.png',
+                      fit: BoxFit.cover,
+                      width: ScreenUtil().setWidth(130),
+                      height: ScreenUtil().setHeight(90),
+                    ),
+                    delayinseconds: 1,
+                  ),
+                  MyFadeAnimation(
+                    delayinseconds: 1,
+                    child: RichText(
+                      text: TextSpan(
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: 'Smart Clinic',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 23,
+                              fontFamily: 'Radiant',
+                            ),
+                          ),
+                          TextSpan(
+                            text: '  (Doctors)',
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
                       ),
-                      MyFadeAnimation(
-                        child: Image.asset(
-                          'assets/images/app_icon.png',
-                          fit: BoxFit.cover,
-                          width: ScreenUtil().setWidth(130),
-                          height: ScreenUtil().setHeight(90),
-                        ),
-                        delayinseconds: 1,
+                    ),
+                  ),
+                  SizedBox(
+                    height: ScreenUtil().setHeight(10),
+                  ),
+                  MyFadeAnimation(
+                    delayinseconds: 1.5,
+                    child: Card(
+                      margin: EdgeInsets.symmetric(
+                        horizontal: ScreenUtil().setHeight(13),
                       ),
-                      MyFadeAnimation(
-                        delayinseconds: 1,
-                        child: RichText(
-                          text: TextSpan(
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: 'Smart Clinic',
-                                style: TextStyle(
-                                  color: appTheme.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 23,
-                                  fontFamily: 'Radiant',
-                                ),
+                      elevation: 6,
+                      child: Form(
+                        key: _formKey,
+                        child: Padding(
+                          padding: EdgeInsets.all(ScreenUtil().setHeight(10)),
+                          child: Column(
+                            children: <Widget>[
+                              buildTextFormField(
+                                isSSN: true,
+                                label: 'SSN',
                               ),
-                              TextSpan(
-                                text: '  (Doctors)',
-                                style: TextStyle(
-                                  color: appTheme.isDark
-                                      ? Colors.white24
-                                      : Colors.black54,
-                                  fontSize: 10,
+                              SizedBox(
+                                height: ScreenUtil().setHeight(10),
+                              ),
+                              buildTextFormField(
+                                isSSN: false,
+                                label: 'password',
+                              ),
+                              SizedBox(
+                                height: ScreenUtil().setHeight(15),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return ForgotPaswordPage();
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    'Forgot Password ?',
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 15,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: ScreenUtil().setHeight(10),
+                    ),
+                  ),
+                  SizedBox(
+                    height: ScreenUtil().setHeight(20),
+                  ),
+                  MyFadeAnimation(
+                    delayinseconds: 2,
+                    child: Padding(
+                      padding: EdgeInsets.all(
+                        ScreenUtil().setHeight(18),
                       ),
-                      MyFadeAnimation(
-                        delayinseconds: 1.5,
-                        child: Card(
-                          margin: EdgeInsets.symmetric(
-                            horizontal: ScreenUtil().setHeight(13),
-                          ),
-                          elevation: 6,
-                          child: Form(
-                            key: _formKey,
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.all(ScreenUtil().setHeight(10)),
-                              child: Column(
-                                children: <Widget>[
-                                  buildTextFormField(
-                                    isSSN: true,
-                                    label: 'SSN',
-                                  ),
-                                  SizedBox(
-                                    height: ScreenUtil().setHeight(10),
-                                  ),
-                                  buildTextFormField(
-                                    isSSN: false,
-                                    label: 'password',
-                                  ),
-                                  SizedBox(
-                                    height: ScreenUtil().setHeight(15),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) {
-                                              return ForgotPaswordPage();
-                                            },
-                                          ),
-                                        );
-                                      },
-                                      child: Text(
-                                        'Forgot Password ?',
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                      child: Container(
+                        key: buttonKey,
+                        height: ScreenUtil().setHeight(48),
+                        width: width,
+                        child: RectGetter(
+                          key: globalKey,
+                          child: ProgressButton(
+                            progressIndicatorColor: Colors.white,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                            child: Text(
+                              'Login',
+                              style: TextStyle(
+                                color: Colors.white,
                               ),
                             ),
+                            onPressed: (AnimationController controller) {
+                              animatedButton(controller);
+                            },
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: ScreenUtil().setHeight(20),
-                      ),
-                      MyFadeAnimation(
-                        delayinseconds: 2,
-                        child: Padding(
-                          padding: EdgeInsets.all(
-                            ScreenUtil().setHeight(18),
+                    ),
+                  ),
+                  SizedBox(
+                    height: ScreenUtil().setHeight(30),
+                  ),
+                  MyFadeAnimation(
+                    delayinseconds: 2.5,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          PageTransition(
+                            child: CreateAccountBasicInfo(),
+                            type: PageTransitionType.leftToRight,
                           ),
-                          child: Container(
-                            key: buttonKey,
-                            height: ScreenUtil().setHeight(48),
-                            width: width,
-                            child: RectGetter(
-                              key: globalKey,
-                              child: ProgressButton(
-                                progressIndicatorColor: Colors.white,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(8),
-                                ),
-                                child: Text(
-                                  'Login',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                onPressed: (AnimationController controller) {
-                                  animatedButton(controller);
-                                },
-                              ),
-                            ),
-                          ),
+                        );
+                      },
+                      child: Text(
+                        'CREATE NEW ACCOUNT',
+                        style: TextStyle(
+                          fontSize: 15,
+                          wordSpacing: 1.8,
+                          fontFamily: 'Vonique',
+                          color: Colors.black,
+                          letterSpacing: 1.8,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                      SizedBox(
-                        height: ScreenUtil().setHeight(30),
-                      ),
-                      MyFadeAnimation(
-                        delayinseconds: 2.5,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              PageTransition(
-                                child: CreateAccountBasicInfo(),
-                                type: PageTransitionType.leftToRight,
-                              ),
-                            );
-                          },
-                          child: Text(
-                            'CREATE NEW ACCOUNT',
-                            style: TextStyle(
-                              fontSize: 15,
-                              wordSpacing: 1.8,
-                              fontFamily: 'Vonique',
-                              color:
-                                  appTheme.isDark ? Colors.white : Colors.black,
-                              letterSpacing: 1.8,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
-            );
-          },
+            ],
+          ),
         ),
         _ripple(),
       ],

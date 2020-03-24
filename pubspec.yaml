@@ -36,7 +36,7 @@ dependencies:
   sliding_sheet:
   photo_view:
   rotated_corner_decoration:
-  # path_provider:
+  flip_card:
   animate_do:
   provider:
   f_datetimerangepicker:
