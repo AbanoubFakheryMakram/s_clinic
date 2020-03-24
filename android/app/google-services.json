@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "208291396714",
+    "firebase_url": "https://test-6bde1.firebaseio.com",
+    "project_id": "test-6bde1",
+    "storage_bucket": "test-6bde1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208291396714:android:a18f36320661fc8f879e13",
+        "android_client_info": {
+          "package_name": "com.example.smartclinic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "208291396714-cbripurpeki58v4dr7191rjsetpp3lj2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smartclinic",
+            "certificate_hash": "48d693aeb552a09f860106c0c2d0741e477deee6"
+          }
+        },
+        {
+          "client_id": "208291396714-34gbtca6cuh2fb980ub52e52nuda8avv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBW_cxOIyE530ULeb7dGQ1gqMAjr_SdGbE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "208291396714-34gbtca6cuh2fb980ub52e52nuda8avv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

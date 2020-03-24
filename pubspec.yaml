@@ -1,0 +1,75 @@
+name: smart_clinic
+description: A new Flutter project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: 
+  rect_getter:
+  simple_animations:
+  page_transition:
+  flutter_screenutil:
+  firebase_core: 
+  firebase_auth: 
+  firebase_storage:
+  cloud_firestore:
+  shared_preferences:
+  flutter_animated_dialog:
+  data_connection_checker:
+  progress_indicator_button:
+  fluttertoast:
+  flutter_rounded_date_picker:
+  font_awesome_flutter:
+  image_picker:
+  permission_handler:
+  cached_network_image:
+  animated_text_kit:
+  country_code_picker:
+  connectivity:
+  time_ago_provider:
+  sliding_sheet:
+  photo_view:
+  rotated_corner_decoration:
+  # path_provider:
+  animate_do:
+  provider:
+  f_datetimerangepicker:
+  lottie:
+  location:
+  google_maps_flutter:
+  geolocator:  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+   - assets/images/
+   - assets/fonts/
+   - assets/sounds/
+
+
+
+  fonts:
+    - family: Baloo
+      fonts:
+        - asset: assets/fonts/Baloo.ttf
+
+    - family: Radiant
+      fonts:
+        - asset: assets/fonts/Radiant.ttf
+    
+    - family: Vonique
+      fonts:
+        - asset: assets/fonts/Vonique.ttf
+
