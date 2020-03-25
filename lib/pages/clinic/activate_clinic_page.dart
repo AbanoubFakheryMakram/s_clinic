@@ -21,7 +21,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
   final cardKey = GlobalKey<FlipCardState>();
   bool useCurrentLocation = true;
 
-  bool satarday = true;
+  bool satarday = false;
   bool sunday = false;
   bool monday = false;
   bool tuesday = false;
@@ -357,13 +357,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 satarday = val;
-                                if (satarday) {
-                                  workDays.add({'Satarday': _satarday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Satarday',
-                                  );
-                                }
+
                                 setState(() {});
                               },
                             ),
@@ -412,13 +406,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 sunday = val;
-                                if (sunday) {
-                                  workDays.add({'Sunday': _sunday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Sunday',
-                                  );
-                                }
+
                                 setState(() {});
                               },
                             ),
@@ -467,13 +455,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 monday = val;
-                                if (monday) {
-                                  workDays.add({'Monday': _monday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Monday',
-                                  );
-                                }
+
                                 setState(() {});
                               },
                             ),
@@ -522,13 +504,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 tuesday = val;
-                                if (tuesday) {
-                                  workDays.add({'Tuesday': _tuesday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Tuesday',
-                                  );
-                                }
+
                                 setState(() {});
                               },
                             ),
@@ -577,13 +553,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 wednesday = val;
-                                if (wednesday) {
-                                  workDays.add({'Wednesday': _wednesday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Wednesday',
-                                  );
-                                }
+
                                 setState(() {});
                               },
                             ),
@@ -632,13 +602,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 thursday = val;
-                                if (thursday) {
-                                  workDays.add({'Thursday': _thursday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Thursday',
-                                  );
-                                }
+
                                 setState(() {});
                               },
                             ),
@@ -687,13 +651,6 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 friday = val;
-                                if (friday) {
-                                  workDays.add({'Friday': _friday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Friday',
-                                  );
-                                }
                                 setState(() {});
                               },
                             ),
@@ -801,7 +758,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
   }
 
   void processData(AnimationController controller, BuildContext context) async {
-    print(workDays);
+    
     if (address.isEmpty && locationLatlng == null) {
       AppUtils.showToast(msg: 'Please determine the clinic location');
     } else if (fee.isEmpty) {
@@ -839,6 +796,29 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
         controller.reverse();
         return;
       }
+
+      if (friday) {
+        workDays.add({'Friday': _friday});
+      }
+      if (thursday) {
+        workDays.add({'Thursday': _thursday});
+      }
+      if (wednesday) {
+        workDays.add({'Wednesday': _wednesday});
+      }
+      if (tuesday) {
+        workDays.add({'Tuesday': _tuesday});
+      }
+      if (monday) {
+        workDays.add({'Monday': _monday});
+      }
+      if (sunday) {
+        workDays.add({'Sunday': _sunday});
+      }
+      if (satarday) {
+        workDays.add({'Satarday': _satarday});
+      }
+      print(workDays);
     }
   }
 }
