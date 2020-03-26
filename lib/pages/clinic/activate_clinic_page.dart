@@ -654,7 +654,10 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 friday = val;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f2b4e750555c24ffeb8088ba1fc7aa2ec0dc4dfa
                                 setState(() {});
                               },
                             ),
@@ -766,6 +769,10 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
   }
 
   void processData(AnimationController controller, BuildContext context) async {
+<<<<<<< HEAD
+=======
+    
+>>>>>>> f2b4e750555c24ffeb8088ba1fc7aa2ec0dc4dfa
     if (address.isEmpty && locationLatlng == null) {
       AppUtils.showToast(msg: 'Please determine the clinic location');
     } else if (locationLatLng == 'Getting device location...' &&
@@ -809,7 +816,10 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
         controller.reverse();
         return;
       }
+<<<<<<< HEAD
       workDays.clear();
+=======
+>>>>>>> f2b4e750555c24ffeb8088ba1fc7aa2ec0dc4dfa
 
       if (friday) {
         workDays.add({'Friday': _friday});
@@ -831,6 +841,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
       }
       if (satarday) {
         workDays.add({'Satarday': _satarday});
+<<<<<<< HEAD
       } else if (workDays.length == 0) {
         AppUtils.showToast(msg: 'Specify Work days and times');
       }
@@ -861,6 +872,10 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
         },
       );
       controller.reverse();
+=======
+      }
+      print(workDays);
+>>>>>>> f2b4e750555c24ffeb8088ba1fc7aa2ec0dc4dfa
     }
   }
 }
