@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_clinic/pages/auth/login.dart';
 import 'package:smart_clinic/pages/home.dart';
 
+import 'my_test_file.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(

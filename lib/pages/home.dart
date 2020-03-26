@@ -29,7 +29,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool networkIsActive;
+  bool networkIsActive = true;
 
   bool isCollapsed = false;
 

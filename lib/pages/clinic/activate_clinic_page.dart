@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
 import 'package:flip_card/flip_card.dart';
 import 'dart:math' as math;
@@ -6,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:progress_indicator_button/progress_button.dart';
+import 'package:smart_clinic/models/pointer.dart';
 import 'package:smart_clinic/utils/app_utils.dart';
 
 import '../../utils/app_utils.dart';
@@ -21,7 +23,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
   final cardKey = GlobalKey<FlipCardState>();
   bool useCurrentLocation = true;
 
-  bool satarday = true;
+  bool satarday = false;
   bool sunday = false;
   bool monday = false;
   bool tuesday = false;
@@ -39,6 +41,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
 
   String address = '';
   String fee = '';
+  String phone;
   String locationLatLng = '';
 
   LatLng locationLatlng;
@@ -204,14 +207,14 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                                             bool isGranted = await AppUtils
                                                 .askDeviceLocationPermission();
                                             if (isGranted) {
-                                              location.getLocation().then(
+                                              await location.getLocation().then(
                                                 (location) {
                                                   locationLatlng = LatLng(
                                                     location.latitude,
                                                     location.longitude,
                                                   );
                                                   locationLatLng =
-                                                      '${location.latitude.toStringAsFixed(4)} : ${location.longitude.toStringAsFixed(4)}';
+                                                      '${location.latitude.toStringAsFixed(6)} : ${location.longitude.toStringAsFixed(6)}';
                                                   setState(() {});
                                                 },
                                               );
@@ -357,13 +360,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 satarday = val;
-                                if (satarday) {
-                                  workDays.add({'Satarday': _satarday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Satarday',
-                                  );
-                                }
+
                                 setState(() {});
                               },
                             ),
@@ -412,13 +409,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 sunday = val;
-                                if (sunday) {
-                                  workDays.add({'Sunday': _sunday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Sunday',
-                                  );
-                                }
+
                                 setState(() {});
                               },
                             ),
@@ -467,13 +458,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 monday = val;
-                                if (monday) {
-                                  workDays.add({'Monday': _monday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Monday',
-                                  );
-                                }
+
                                 setState(() {});
                               },
                             ),
@@ -522,13 +507,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 tuesday = val;
-                                if (tuesday) {
-                                  workDays.add({'Tuesday': _tuesday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Tuesday',
-                                  );
-                                }
+
                                 setState(() {});
                               },
                             ),
@@ -577,13 +556,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 wednesday = val;
-                                if (wednesday) {
-                                  workDays.add({'Wednesday': _wednesday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Wednesday',
-                                  );
-                                }
+
                                 setState(() {});
                               },
                             ),
@@ -632,13 +605,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 thursday = val;
-                                if (thursday) {
-                                  workDays.add({'Thursday': _thursday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Thursday',
-                                  );
-                                }
+
                                 setState(() {});
                               },
                             ),
@@ -687,13 +654,7 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
                               checkColor: Colors.white,
                               onChanged: (bool val) {
                                 friday = val;
-                                if (friday) {
-                                  workDays.add({'Friday': _friday});
-                                } else {
-                                  workDays.removeWhere(
-                                    (item) => item.keys.first == 'Friday',
-                                  );
-                                }
+
                                 setState(() {});
                               },
                             ),
@@ -768,10 +729,14 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
       keyboardType: keyboardType,
       maxLines: keyboardType == TextInputType.multiline ? null : 1,
       onChanged: (input) {
-        label == 'Fee' ? fee = input : address = input;
+        label == 'Fee'
+            ? fee = input
+            : label == 'Phone' ? phone = input : address = input;
       },
       onSaved: (input) {
-        label == 'Fee' ? fee = input : address = input;
+        label == 'Fee'
+            ? fee = input
+            : label == 'Phone' ? phone = input : address = input;
       },
       decoration: InputDecoration(
         focusedBorder: UnderlineInputBorder(
@@ -801,15 +766,20 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
   }
 
   void processData(AnimationController controller, BuildContext context) async {
-    print(workDays);
     if (address.isEmpty && locationLatlng == null) {
       AppUtils.showToast(msg: 'Please determine the clinic location');
+    } else if (locationLatLng == 'Getting device location...' &&
+            address == null ||
+        address.isEmpty) {
+      AppUtils.showToast(
+          msg:
+              'Please wait while getting device location or type address manually');
     } else if (fee.isEmpty) {
       AppUtils.showToast(msg: 'Type the dialy fee');
     } else if (int.parse(fee) <= 0) {
       AppUtils.showToast(msg: 'Fee can not be less then or equal to zero');
-    } else if (workDays.length == 0) {
-      AppUtils.showToast(msg: 'Specify Work days and times');
+    } else if (phone != null && phone.isNotEmpty && phone.length < 9) {
+      AppUtils.showToast(msg: 'Invalid phone');
     } else if (satarday && _satarday.isEmpty) {
       AppUtils.showToast(msg: 'Satarday time ?');
     } else if (sunday && _sunday.isEmpty) {
@@ -839,6 +809,58 @@ class _ActivateClinicPageState extends State<ActivateClinicPage>
         controller.reverse();
         return;
       }
+      workDays.clear();
+
+      if (friday) {
+        workDays.add({'Friday': _friday});
+      }
+      if (thursday) {
+        workDays.add({'Thursday': _thursday});
+      }
+      if (wednesday) {
+        workDays.add({'Wednesday': _wednesday});
+      }
+      if (tuesday) {
+        workDays.add({'Tuesday': _tuesday});
+      }
+      if (monday) {
+        workDays.add({'Monday': _monday});
+      }
+      if (sunday) {
+        workDays.add({'Sunday': _sunday});
+      }
+      if (satarday) {
+        workDays.add({'Satarday': _satarday});
+      } else if (workDays.length == 0) {
+        AppUtils.showToast(msg: 'Specify Work days and times');
+      }
+      print(workDays);
+
+      await Firestore.instance
+          .collection('clinics')
+          .document(Pointer.currentUser.id)
+          .setData(
+        {
+          'doctorId': Pointer.currentUser.id,
+          'fee': fee,
+          'latlong': locationLatLng == 'Getting device location...'
+              ? ''
+              : locationLatLng,
+          'address': address == null ? '' : address,
+          'phone': phone,
+          'wordDays': workDays,
+        },
+      );
+
+      await Firestore.instance
+          .collection('human doctors')
+          .document(Pointer.currentUser.id)
+          .updateData(
+        {
+          'hasClinic': 'true',
+        },
+      );
+      controller.reverse();
     }
   }
 }

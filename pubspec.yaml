@@ -37,13 +37,15 @@ dependencies:
   photo_view:
   rotated_corner_decoration:
   flip_card:
+  flutter_svg:
   animate_do:
   provider:
   f_datetimerangepicker:
   lottie:
   location:
   google_maps_flutter:
-  geolocator:  
+  geolocator:
+
 
 dev_dependencies:
   flutter_test:
@@ -57,6 +59,8 @@ flutter:
    - assets/images/
    - assets/fonts/
    - assets/sounds/
+   - assets/svg/
+   - assets/
 
 
 

@@ -73,7 +73,6 @@ class PostWidgets {
     @required List likes,
     @required BuildContext context,
     @required bool like,
-    @required DocumentSnapshot currentPost,
     @required String postID,
   }) {
     return Row(

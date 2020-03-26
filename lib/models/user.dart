@@ -1,4 +1,3 @@
-
 class User {
   String id;
   String name;
@@ -7,8 +6,6 @@ class User {
   String gender;
   String image = '';
   String hasClinic = '';
-  String address = '';
-  String fee = '';
   String phone = '';
   String specialist = '';
   String degree = '';
@@ -23,8 +20,6 @@ class User {
     this.gender,
     this.image,
     this.hasClinic,
-    this.address,
-    this.fee,
     this.phone,
     this.specialist,
     this.degree,
@@ -39,8 +34,6 @@ class User {
   get getGender => gender;
   get getImage => image;
   get getHasClinic => hasClinic;
-  get getAddress => address;
-  get getFee => fee;
   get getPhone => phone;
   get getSpecialist => specialist;
   get getQualifications => qualifications;
@@ -56,8 +49,6 @@ class User {
       'gender': this.gender,
       'image': this.image,
       'hasClinic': this.hasClinic,
-      'address': this.address,
-      'fee': this.fee,
       'phone': this.phone,
       'specialist': this.specialist,
       'qualifications': this.qualifications,
@@ -75,8 +66,6 @@ class User {
       image: map['image'],
       id: map['id'],
       hasClinic: map['hasClinic'],
-      address: map['address'],
-      fee: map['fee'],
       phone: map['phone'],
       specialist: map['specialist'],
       qualifications: map['qualifications'],

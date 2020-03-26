@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:smart_clinic/animation/fade_animation.dart';
+import 'package:smart_clinic/models/case.dart';
 import 'package:smart_clinic/models/pointer.dart';
 import 'package:smart_clinic/pages/posts/functionality.dart';
 import 'package:smart_clinic/pages/posts/widgets.dart';
@@ -13,14 +13,6 @@ class PostsPage extends StatefulWidget {
 }
 
 class _PostsPageState extends State<PostsPage> {
-  String imageURL = '';
-  String name = '';
-  String specialization = '';
-  String gender = '';
-  String postID;
-
-  double duration = 0;
-
   bool like = false;
   List<String> likes = <String>[];
   List<String> comments = <String>[];
@@ -29,219 +21,178 @@ class _PostsPageState extends State<PostsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: ScreenUtil.screenWidth,
-      height: ScreenUtil.screenHeight,
-      child: StreamBuilder(
-        stream: Firestore.instance.collection('posts').snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: snapshot.data.documents.length,
-              itemBuilder: (context, index) {
-                DocumentSnapshot currentPost = snapshot.data.documents[index];
-                imageURL = currentPost.data['doctor_image'];
-                name = currentPost.data['doctor_name'];
-                gender = currentPost.data['doctor_gender'];
-                specialization = currentPost.data['doctor_specialization'];
-                postID = currentPost.data['post_id'];
-                likes = List.from(currentPost.data['likes']);
-                comments = List.from(currentPost.data['comments']);
+    return SafeArea(
+      child: Scaffold(
+        body: StreamBuilder(
+          stream: Firestore.instance
+              .collection('cases')
+              .orderBy('date', descending: true)
+              .snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                physics: BouncingScrollPhysics(),
+                itemCount: snapshot.data.documents.length,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot currentCase = snapshot.data.documents[index];
+                  Case _case = Case.fromDoc(currentCase.data);
+                  like = false;
 
-                like = false;
-
-                if (likes.isNotEmpty) {
-                  if (likes.contains(Pointer.currentUser.id)) {
-                    like = true;
+                  likes = _case.likes;
+                  if (likes.isNotEmpty) {
+                    if (likes.contains(Pointer.currentUser.id)) {
+                      like = true;
+                    }
                   }
-                }
+                  return buildCase(_case);
+                },
+              );
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
+        ),
+      ),
+    );
+  }
 
-                return MyFadeAnimation(
-                  delayinseconds: duration,
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: ScreenUtil().setWidth(8),
-                      right: ScreenUtil().setWidth(8),
-                      top: ScreenUtil().setWidth(18),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    width: ScreenUtil.screenWidth,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        top: ScreenUtil().setWidth(8),
-                        left: ScreenUtil().setWidth(8),
-                        right: ScreenUtil().setWidth(8),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: ScreenUtil().setWidth(8.0),
-                          vertical: ScreenUtil().setHeight(8.0),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    PostWidgets.buildDoctorProfileImage(
-                                      imageURL: imageURL,
-                                      gender: gender,
-                                    ),
-                                    SizedBox(
-                                      width: ScreenUtil().setWidth(11),
-                                    ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          'Dr: $name',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${AppUtils.getTimeAgo(currentPost.data['date'])}',
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.blueGrey,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  specialization,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Divider(
-                              height: ScreenUtil().setHeight(25),
-                              color: Colors.grey,
-                              thickness: .5,
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Text(
-                                  'Symptoms: ',
-                                  style: TextStyle(
-                                    fontFamily: 'Baloo',
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: PostFunctionality.getSymptoms(
-                                      currentPost,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Divider(
-                              height: ScreenUtil().setHeight(25),
-                              color: Colors.grey,
-                              thickness: .5,
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Text(
-                                  'Diagnosis: ',
-                                  style: TextStyle(
-                                    fontFamily: 'Baloo',
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    left: ScreenUtil().setWidth(8),
-                                    right: ScreenUtil().setWidth(8),
-                                  ),
-                                  child: Text(
-                                    '${currentPost.data['Diagnosis']}',
-                                    softWrap: true,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Divider(
-                              height: ScreenUtil().setHeight(25),
-                              color: Colors.grey,
-                              thickness: .5,
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Text(
-                                  'pharmaceutical: ',
-                                  style: TextStyle(
-                                    fontFamily: 'Baloo',
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children:
-                                        PostFunctionality.getpharmaceutical(
-                                            currentPost),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: ScreenUtil().setHeight(
-                                10,
-                              ),
-                            ),
-                            PostWidgets.buildCommentLikeButtons(
-                              comments: comments,
-                              context: context,
-                              likes: likes,
-                              postID: postID,
-                              like: like,
-                              currentPost: currentPost,
-                            ),
-                            PostWidgets.countCommentsAndLikes(
-                              comments: comments,
-                              likes: likes,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+  Widget buildCase(Case _case) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: ScreenUtil().setWidth(10),
+        vertical: ScreenUtil().setHeight(10),
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: ScreenUtil().setWidth(10),
+        vertical: ScreenUtil().setHeight(10),
+      ),
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black,
+            blurRadius: 5,
+            offset: Offset(3, 3),
+          )
+        ],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  PostWidgets.buildDoctorProfileImage(
+                    imageURL: _case.doctor_image,
+                    gender: _case.doctor_gender,
                   ),
-                );
-              },
-            );
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
+                  SizedBox(
+                    width: ScreenUtil().setWidth(15),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'Dr: ${_case.doctor_name}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      Text(
+                        '${AppUtils.getTimeAgo(_case.date)}',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.blueGrey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Text(
+                '${_case.doctor_spec}',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: ScreenUtil().setHeight(20),
+          ),
+          Text(
+            'A ${_case.patient_gender} with height = ${_case.patient_height} cm and weight = ${_case.patient_weight} kg',
+          ),
+          Text(
+            'The BMI was: ${_case.patient_bmi} kg/m²',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(
+            height: ScreenUtil().setHeight(8),
+          ),
+          Text(
+            'Has the following symptoms',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: PostFunctionality.buildItemsList(_case.symptoms),
+          ),
+          SizedBox(
+            height: ScreenUtil().setHeight(8),
+          ),
+          Text(
+            'My diagonsis was',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Text(_case.diagnosis),
+          SizedBox(
+            height: ScreenUtil().setHeight(8),
+          ),
+          Text(
+            'And i wrote these pharmaceutical',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: PostFunctionality.buildItemsList(_case.pharmaceutical),
+          ),
+          SizedBox(
+            height: ScreenUtil().setHeight(
+              10,
+            ),
+          ),
+          PostWidgets.buildCommentLikeButtons(
+            comments: _case.comments,
+            context: context,
+            likes: _case.likes,
+            postID: _case.post_id,
+            like: like,
+          ),
+          PostWidgets.countCommentsAndLikes(
+            comments: _case.comments,
+            likes: _case.likes,
+          ),
+        ],
       ),
     );
   }

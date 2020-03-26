@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                             children: <Widget>[
                               buildTextFormField(
                                 isSSN: true,
-                                label: 'SSN',
+                                label: 'Identity number',
                               ),
                               SizedBox(
                                 height: ScreenUtil().setHeight(10),

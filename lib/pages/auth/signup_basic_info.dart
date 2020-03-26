@@ -151,7 +151,7 @@ class _CreateAccountBasicInfoState extends State<CreateAccountBasicInfo>
                       MyFadeAnimation(
                         delayinseconds: 2.5,
                         child: buildTextFormField(
-                          label: 'SSN',
+                          label: 'Identity number',
                           isPhone: false,
                           isSSN: true,
                           isPassword: false,
